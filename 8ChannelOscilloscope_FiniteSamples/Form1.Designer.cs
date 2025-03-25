@@ -63,8 +63,8 @@
             this.mnu_Acquire = new System.Windows.Forms.ToolStripMenuItem();
             this.mnu_Clear = new System.Windows.Forms.ToolStripMenuItem();
             this.mnu_Help = new System.Windows.Forms.ToolStripMenuItem();
-            this.btn_ClearChart = new System.Windows.Forms.Button();
-            this.btn_Acquire = new System.Windows.Forms.Button();
+            this.saveFD = new System.Windows.Forms.SaveFileDialog();
+            this.openFD = new System.Windows.Forms.OpenFileDialog();
             this.gb_DAQ.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.NumUD_SampPerChan)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.NumUD_ChanSampRate)).BeginInit();
@@ -81,8 +81,6 @@
             this.gb_DAQ.Controls.Add(this.lbl_AcqTime);
             this.gb_DAQ.Controls.Add(this.lbl_ADrateTimeLabel);
             this.gb_DAQ.Controls.Add(this.lbl_AcqTimeLabel);
-            this.gb_DAQ.Controls.Add(this.btn_ClearChart);
-            this.gb_DAQ.Controls.Add(this.btn_Acquire);
             this.gb_DAQ.Controls.Add(this.lbl_ChanRange);
             this.gb_DAQ.Controls.Add(this.lbl_NumOfSamples);
             this.gb_DAQ.Controls.Add(this.lbl_SampleRate);
@@ -101,9 +99,9 @@
             this.gb_DAQ.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.gb_DAQ.Font = new System.Drawing.Font("Mongolian Baiti", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.gb_DAQ.ForeColor = System.Drawing.SystemColors.Control;
-            this.gb_DAQ.Location = new System.Drawing.Point(12, 27);
+            this.gb_DAQ.Location = new System.Drawing.Point(12, 71);
             this.gb_DAQ.Name = "gb_DAQ";
-            this.gb_DAQ.Size = new System.Drawing.Size(510, 506);
+            this.gb_DAQ.Size = new System.Drawing.Size(510, 371);
             this.gb_DAQ.TabIndex = 0;
             this.gb_DAQ.TabStop = false;
             this.gb_DAQ.Text = "DAQ Configuration";
@@ -113,7 +111,7 @@
             this.lbl_ADrate.AutoSize = true;
             this.lbl_ADrate.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(192)))), ((int)(((byte)(192)))));
             this.lbl_ADrate.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.lbl_ADrate.Location = new System.Drawing.Point(372, 428);
+            this.lbl_ADrate.Location = new System.Drawing.Point(372, 329);
             this.lbl_ADrate.Name = "lbl_ADrate";
             this.lbl_ADrate.Size = new System.Drawing.Size(0, 14);
             this.lbl_ADrate.TabIndex = 20;
@@ -123,7 +121,7 @@
             this.lbl_AcqTime.AutoSize = true;
             this.lbl_AcqTime.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(192)))), ((int)(((byte)(192)))));
             this.lbl_AcqTime.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.lbl_AcqTime.Location = new System.Drawing.Point(372, 324);
+            this.lbl_AcqTime.Location = new System.Drawing.Point(372, 225);
             this.lbl_AcqTime.Name = "lbl_AcqTime";
             this.lbl_AcqTime.Size = new System.Drawing.Size(0, 14);
             this.lbl_AcqTime.TabIndex = 19;
@@ -134,7 +132,7 @@
             this.lbl_ADrateTimeLabel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(192)))), ((int)(((byte)(192)))));
             this.lbl_ADrateTimeLabel.Font = new System.Drawing.Font("Mongolian Baiti", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lbl_ADrateTimeLabel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.lbl_ADrateTimeLabel.Location = new System.Drawing.Point(315, 393);
+            this.lbl_ADrateTimeLabel.Location = new System.Drawing.Point(315, 294);
             this.lbl_ADrateTimeLabel.Name = "lbl_ADrateTimeLabel";
             this.lbl_ADrateTimeLabel.Size = new System.Drawing.Size(115, 16);
             this.lbl_ADrateTimeLabel.TabIndex = 18;
@@ -146,7 +144,7 @@
             this.lbl_AcqTimeLabel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(192)))), ((int)(((byte)(192)))));
             this.lbl_AcqTimeLabel.Font = new System.Drawing.Font("Mongolian Baiti", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lbl_AcqTimeLabel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.lbl_AcqTimeLabel.Location = new System.Drawing.Point(294, 294);
+            this.lbl_AcqTimeLabel.Location = new System.Drawing.Point(294, 195);
             this.lbl_AcqTimeLabel.Name = "lbl_AcqTimeLabel";
             this.lbl_AcqTimeLabel.Size = new System.Drawing.Size(157, 16);
             this.lbl_AcqTimeLabel.TabIndex = 17;
@@ -304,9 +302,9 @@
             legend1.IsTextAutoFit = false;
             legend1.Name = "Legend1";
             this.cht_Data.Legends.Add(legend1);
-            this.cht_Data.Location = new System.Drawing.Point(539, 27);
+            this.cht_Data.Location = new System.Drawing.Point(551, 46);
             this.cht_Data.Name = "cht_Data";
-            this.cht_Data.Size = new System.Drawing.Size(583, 506);
+            this.cht_Data.Size = new System.Drawing.Size(571, 415);
             this.cht_Data.TabIndex = 1;
             this.cht_Data.Text = "chart1";
             title1.Font = new System.Drawing.Font("Mongolian Baiti", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -338,15 +336,16 @@
             this.mnu_File.ShortcutKeyDisplayString = "Ctrl+F";
             this.mnu_File.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.F)));
             this.mnu_File.Size = new System.Drawing.Size(37, 20);
-            this.mnu_File.Text = "File";
+            this.mnu_File.Text = "&File";
             // 
             // mnu_Open
             // 
             this.mnu_Open.Name = "mnu_Open";
             this.mnu_Open.ShortcutKeyDisplayString = "Ctrl+O";
             this.mnu_Open.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
-            this.mnu_Open.Size = new System.Drawing.Size(146, 22);
-            this.mnu_Open.Text = "Open";
+            this.mnu_Open.Size = new System.Drawing.Size(180, 22);
+            this.mnu_Open.Text = "&Open";
+            this.mnu_Open.Click += new System.EventHandler(this.mnu_Open_Click);
             // 
             // mnu_Save
             // 
@@ -356,32 +355,35 @@
             this.mnu_Save.Name = "mnu_Save";
             this.mnu_Save.ShortcutKeyDisplayString = "Ctrl+S";
             this.mnu_Save.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
-            this.mnu_Save.Size = new System.Drawing.Size(146, 22);
-            this.mnu_Save.Text = "Save";
+            this.mnu_Save.Size = new System.Drawing.Size(180, 22);
+            this.mnu_Save.Text = "&Save";
             // 
             // mnu_New
             // 
             this.mnu_New.Name = "mnu_New";
             this.mnu_New.ShortcutKeyDisplayString = "Ctrl+N";
             this.mnu_New.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.N)));
-            this.mnu_New.Size = new System.Drawing.Size(158, 22);
-            this.mnu_New.Text = "New";
+            this.mnu_New.Size = new System.Drawing.Size(180, 22);
+            this.mnu_New.Text = "&New";
+            this.mnu_New.Click += new System.EventHandler(this.mnu_New_Click);
             // 
             // mnu_Append
             // 
             this.mnu_Append.Name = "mnu_Append";
             this.mnu_Append.ShortcutKeyDisplayString = "Ctrl+A";
             this.mnu_Append.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.A)));
-            this.mnu_Append.Size = new System.Drawing.Size(158, 22);
-            this.mnu_Append.Text = "Append";
+            this.mnu_Append.Size = new System.Drawing.Size(180, 22);
+            this.mnu_Append.Text = "&Append";
+            this.mnu_Append.Click += new System.EventHandler(this.mnu_Append_Click);
             // 
             // mnu_Quit
             // 
             this.mnu_Quit.Name = "mnu_Quit";
             this.mnu_Quit.ShortcutKeyDisplayString = "Ctrl+Q";
             this.mnu_Quit.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Q)));
-            this.mnu_Quit.Size = new System.Drawing.Size(146, 22);
-            this.mnu_Quit.Text = "Quit";
+            this.mnu_Quit.Size = new System.Drawing.Size(180, 22);
+            this.mnu_Quit.Text = "&Quit";
+            this.mnu_Quit.Click += new System.EventHandler(this.mnu_Quit_Click);
             // 
             // mnu_Acquire
             // 
@@ -389,7 +391,7 @@
             this.mnu_Acquire.ShortcutKeyDisplayString = "Ctrl+D";
             this.mnu_Acquire.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.D)));
             this.mnu_Acquire.Size = new System.Drawing.Size(60, 20);
-            this.mnu_Acquire.Text = "Acquire";
+            this.mnu_Acquire.Text = "&Acquire";
             this.mnu_Acquire.Click += new System.EventHandler(this.mnu_Acquire_Click);
             // 
             // mnu_Clear
@@ -398,7 +400,7 @@
             this.mnu_Clear.ShortcutKeyDisplayString = "Ctrl+C";
             this.mnu_Clear.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.C)));
             this.mnu_Clear.Size = new System.Drawing.Size(78, 20);
-            this.mnu_Clear.Text = "Clear Chart";
+            this.mnu_Clear.Text = "&Clear Chart";
             this.mnu_Clear.Click += new System.EventHandler(this.mnu_Clear_Click);
             // 
             // mnu_Help
@@ -407,39 +409,19 @@
             this.mnu_Help.ShortcutKeyDisplayString = "Ctrl+H";
             this.mnu_Help.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.H)));
             this.mnu_Help.Size = new System.Drawing.Size(44, 20);
-            this.mnu_Help.Text = "Help";
+            this.mnu_Help.Text = "&Help";
             this.mnu_Help.Click += new System.EventHandler(this.mnu_Help_Click);
             // 
-            // btn_ClearChart
+            // openFD
             // 
-            this.btn_ClearChart.BackColor = System.Drawing.SystemColors.ScrollBar;
-            this.btn_ClearChart.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
-            this.btn_ClearChart.Location = new System.Drawing.Point(17, 417);
-            this.btn_ClearChart.Name = "btn_ClearChart";
-            this.btn_ClearChart.Size = new System.Drawing.Size(221, 73);
-            this.btn_ClearChart.TabIndex = 16;
-            this.btn_ClearChart.Text = "Clear Chart";
-            this.btn_ClearChart.UseVisualStyleBackColor = false;
-            this.btn_ClearChart.Click += new System.EventHandler(this.btn_ClearChart_Click);
-            // 
-            // btn_Acquire
-            // 
-            this.btn_Acquire.BackColor = System.Drawing.SystemColors.ScrollBar;
-            this.btn_Acquire.ForeColor = System.Drawing.SystemColors.InfoText;
-            this.btn_Acquire.Location = new System.Drawing.Point(17, 323);
-            this.btn_Acquire.Name = "btn_Acquire";
-            this.btn_Acquire.Size = new System.Drawing.Size(221, 73);
-            this.btn_Acquire.TabIndex = 15;
-            this.btn_Acquire.Text = "Acquire Data";
-            this.btn_Acquire.UseVisualStyleBackColor = false;
-            this.btn_Acquire.Click += new System.EventHandler(this.btn_Acquire_Click);
+            this.openFD.FileName = "openFileDialog1";
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("$this.BackgroundImage")));
-            this.ClientSize = new System.Drawing.Size(1134, 559);
+            this.ClientSize = new System.Drawing.Size(1134, 478);
             this.Controls.Add(this.cht_Data);
             this.Controls.Add(this.gb_DAQ);
             this.Controls.Add(this.menuStrip1);
@@ -495,8 +477,8 @@
         private System.Windows.Forms.ToolStripMenuItem mnu_Acquire;
         private System.Windows.Forms.ToolStripMenuItem mnu_Clear;
         private System.Windows.Forms.ToolStripMenuItem mnu_Help;
-        private System.Windows.Forms.Button btn_ClearChart;
-        private System.Windows.Forms.Button btn_Acquire;
+        private System.Windows.Forms.SaveFileDialog saveFD;
+        private System.Windows.Forms.OpenFileDialog openFD;
     }
 }
 

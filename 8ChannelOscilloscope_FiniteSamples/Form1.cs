@@ -10,6 +10,7 @@ using NationalInstruments.DAQmx;
 using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
 using System.Diagnostics;
+using System.IO;
 
 namespace _8ChannelOscilloscope_FiniteSamples
 { 
@@ -58,7 +59,7 @@ namespace _8ChannelOscilloscope_FiniteSamples
             }
             catch (Exception ex1) 
             {
-            
+                MessageBox.Show(ex1.Message);
             }
             try //Setup CBX defaults, items
             {   
@@ -183,49 +184,6 @@ namespace _8ChannelOscilloscope_FiniteSamples
             AD_SampleRate();
         }
 
-        private void btn_Acquire_Click(object sender, EventArgs e)
-        {
-            DisableControls();
-
-            try
-            {
-                int highChan = (int)NumUD_HighChan.Value;
-                int lowChan = (int)NumUD_LowChan.Value;
-                string DeviceName = Cbx_Device.SelectedItem.ToString();
-
-                //Setting max and min values required for AIChannel configuration
-                if (Cbx_VoltageRange.SelectedIndex == 0) { maxV = 10; minV = -10; }
-                if (Cbx_VoltageRange.SelectedIndex == 1) { maxV = 5; minV = -5; }
-                if (Cbx_VoltageRange.SelectedIndex == 2) { maxV = 1; minV = -1; }
-                if (Cbx_VoltageRange.SelectedIndex == 3) { maxV = 0.2; minV = -0.2; }
-
-                myTask = new NationalInstruments.DAQmx.Task();
-
-                //Looping through low-high channels to create channels
-                for (int i = lowChan; i <= highChan; i++)
-                {
-                    string DevChan = $"{DeviceName}/ai{i}";
-                    if (Cbx_TerminalConfig.SelectedIndex == 0) { myTask.AIChannels.CreateVoltageChannel(DevChan, "", AITerminalConfiguration.Nrse, minV, maxV, AIVoltageUnits.Volts); }
-                    if (Cbx_TerminalConfig.SelectedIndex == 1) { myTask.AIChannels.CreateVoltageChannel(DevChan, "", AITerminalConfiguration.Rse, minV, maxV, AIVoltageUnits.Volts); }
-                    if (Cbx_TerminalConfig.SelectedIndex == 2) { myTask.AIChannels.CreateVoltageChannel(DevChan, "", AITerminalConfiguration.Differential, minV, maxV, AIVoltageUnits.Volts); }
-                }
-
-                //Timing Specs
-                myTask.Timing.ConfigureSampleClock("", (Double)NumUD_ChanSampRate.Value, SampleClockActiveEdge.Rising, SampleQuantityMode.FiniteSamples, (int)NumUD_SampPerChan.Value);
-
-                //Verify the task (Needed for timing)
-                //myTask.Control(TaskAction.Verify);
-                reader = new AnalogMultiChannelReader(myTask.Stream);
-                reader.BeginReadMultiSample((int)NumUD_SampPerChan.Value, new AsyncCallback(callback), null);
-
-            }
-            catch (Exception ex)
-            {
-                // MessageBox.Show("There is an issue acquiring data", ex.Message);
-            }
-
-        }
-
         private void callback(IAsyncResult ar)
         {
             data = reader.EndReadMultiSample(ar);
@@ -236,10 +194,6 @@ namespace _8ChannelOscilloscope_FiniteSamples
             myTask?.Dispose();
         }
 
-        private void btn_ClearChart_Click(object sender, EventArgs e)
-        {
-            //cht_Data.Series.Clear();
-        }
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
@@ -272,7 +226,6 @@ namespace _8ChannelOscilloscope_FiniteSamples
             if (Time > MAXTIME)
             {   NumUD_SampPerChan.Value = SampPerChanMAX;
                 NumUD_ChanSampRate.Value = (decimal)ChanSampleRateMAX;
-               //MessageBox.Show($"Please input a value for the Channel Sample rate that is less than {ChanSampleRateMAX}. Time cannot exceed 9 seconds");
             }
 
             else
@@ -292,21 +245,22 @@ namespace _8ChannelOscilloscope_FiniteSamples
                 //Add series to chart and set chart types
                 for (int j = 0; j < rowsChannelsData; j++)
                 {
-                    cht_Data.Series.Add("Channel" + j.ToString());
-                    cht_Data.Series["Channel" + j.ToString()].ChartType = SeriesChartType.Spline;
+                    cht_Data.Series.Add("Channel" + (j+NumUD_LowChan.Value).ToString());
+                    cht_Data.Series["Channel" + (j + NumUD_LowChan.Value).ToString()].ChartType = SeriesChartType.Spline;
                 }
+                int totalChan = (int)NumUD_HighChan.Value - (int)NumUD_LowChan.Value + 1;
 
                 for (int i = 0; i < rowsChannelsData; i++)
                 {
                     for (int j = 0; j < colsVoltageData; j++)
                     {
                         double time = j / (double)NumUD_ChanSampRate.Value;
-                        cht_Data.Series["Channel" + i.ToString()].Points.AddXY(time, data[i, j]);
+                        cht_Data.Series["Channel" + (i+NumUD_LowChan.Value).ToString()].Points.AddXY(time, data[i, j]);
                     }
                 }
             }
             catch (Exception ex2)
-            { MessageBox.Show("There was an issue plotting new data. Clear the chart."); }
+            { MessageBox.Show("There was an issue plotting new data. Clear the chart.", ex2.Message); }
         }
 
         private void DisableControls()
@@ -318,8 +272,8 @@ namespace _8ChannelOscilloscope_FiniteSamples
             NumUD_SampPerChan.Enabled = false;
             NumUD_HighChan.Enabled = false;
             NumUD_LowChan.Enabled = false;  
-            btn_Acquire.Enabled = false;
-            btn_ClearChart.Enabled = false;
+            mnu_Acquire.Enabled = false;
+            mnu_Clear.Enabled = false;
         }
         private void EnableControls()
         {
@@ -330,8 +284,8 @@ namespace _8ChannelOscilloscope_FiniteSamples
             NumUD_SampPerChan.Enabled = true;
             NumUD_HighChan.Enabled = true;
             NumUD_LowChan.Enabled = true;
-            btn_Acquire.Enabled = true;
-            btn_ClearChart.Enabled = true;
+            mnu_Acquire.Enabled = true;
+            mnu_Clear.Enabled = true;
         }
 
         private void mnu_Acquire_Click(object sender, EventArgs e)
@@ -373,7 +327,7 @@ namespace _8ChannelOscilloscope_FiniteSamples
             }
             catch (Exception ex)
             {
-                // MessageBox.Show("There is an issue acquiring data", ex.Message);
+                MessageBox.Show("There is an issue acquiring data", ex.Message);
             }
         }
 
@@ -384,7 +338,136 @@ namespace _8ChannelOscilloscope_FiniteSamples
 
         private void mnu_Help_Click(object sender, EventArgs e)
         {
+            MessageBox.Show( "Here you can find the descriptive caption", "Help: 8 Channel Oscilloscope Functionality"
+                ,MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
 
+        private void mnu_Open_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void mnu_New_Click(object sender, EventArgs e)
+        {   if (data == null)
+            { MessageBox.Show("Acquire data before attempting to save."); }
+            else
+            {
+                saveFD.Filter = "CSV Files|*.csv|All Files|*.*";
+                if (saveFD.ShowDialog() == DialogResult.OK)
+                {
+                    try
+                    {
+                        using (StreamWriter sw = new StreamWriter(saveFD.FileName))
+                        {
+                            //WriteLine moves to NEXT ROW
+                            //COMMAS allow data to be separated into COLUMNS
+                            //Write does not. Keeps values adding in the SAME ROW
+
+                            sw.WriteLine($"Date, {DateTime.Now:MM/dd/yy}");
+                            sw.WriteLine($"Time, {DateTime.Now:hh:mm:ss tt}");
+                            sw.WriteLine($"# Points, {data.GetLength(1)}"); //data result (1) holds length of samples
+
+                            // Write column headers
+                            sw.Write("Elapsed Time(s)");
+                            int lowChan = (int)NumUD_LowChan.Value;
+                            int highChan = (int)NumUD_HighChan.Value;
+                            int totalChan = highChan - lowChan + 1;
+
+                            for (int i = lowChan; i < highChan + 1; i++)
+                            {
+                                sw.Write($",Ch{i} (V)"); //Creates new COLUMN (comma) for each channel
+                            }
+                            sw.WriteLine(); //Moves to next line
+
+                            //write data (same code as plotting data)
+                            double sampleRate = (double)NumUD_ChanSampRate.Value;
+                            for (int j = 0; j < data.GetLength(1); j++)
+                            {
+                                double elapsedTime = j / sampleRate;
+                                sw.Write(elapsedTime.ToString("F3")); //elapsed time 3 decimals
+
+                                //This function will continue to add the rows of voltage data next to each other
+                                //Until the final ROW
+                                for (int i = 0; i < data.GetLength(0); i++)
+                                {
+                                    sw.Write($",{data[i, j]:F3}"); //Voltage data 3 decimals
+                                }
+                                sw.WriteLine();
+                            }
+                        }
+                        MessageBox.Show("Data saved successfully.", "Yay");
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("Error saving data: " + ex.Message, "Boo!");
+                    }
+                }
+            }
+
+        }
+
+        private void mnu_Append_Click(object sender, EventArgs e)
+        {
+            if (data == null)
+            {
+                MessageBox.Show("Please collect data before trying to append");
+            }
+            else 
+            {
+                saveFD.Filter = "CSV Files|*.csv|All Files|*.*";
+                if (saveFD.ShowDialog() == DialogResult.OK)
+                {
+                    try
+                    {
+                        using (StreamWriter sw = File.AppendText(saveFD.FileName)) 
+                        {
+                            sw.WriteLine($"Date, {DateTime.Now:MM/dd/yy}");
+                            sw.WriteLine($"Time, {DateTime.Now:hh:mm:ss tt}");
+                            sw.WriteLine($"# Points, {data.GetLength(1)}"); //data result (1) holds length of samples
+
+                            // Write column headers
+                            sw.Write("Elapsed Time(s)");
+                            int lowChan = (int)NumUD_LowChan.Value;
+                            int highChan = (int)NumUD_HighChan.Value;
+                            int totalChan = highChan - lowChan + 1;
+
+                            for (int i = lowChan; i < highChan + 1; i++)
+                            {
+                                sw.Write($",Ch{i} (V)"); //Creates new COLUMN (comma) for each channel
+                            }
+                            sw.WriteLine(); //Moves to next line
+
+                            //write data (same code as plotting data)
+                            double sampleRate = (double)NumUD_ChanSampRate.Value;
+                            for (int j = 0; j < data.GetLength(1); j++)
+                            {
+                                double elapsedTime = j / sampleRate;
+                                sw.Write(elapsedTime.ToString("F3")); //elapsed time 3 decimals
+
+                                //This function will continue to add the rows of voltage data next to each other
+                                //Until the final ROW
+                                for (int i = 0; i < data.GetLength(0); i++)
+                                {
+                                    sw.Write($",{data[i, j]:F3}"); //Voltage data 3 decimals
+                                }
+                                sw.WriteLine();
+                            }
+                        }
+                    }
+                    catch (Exception ex) 
+                    {
+                        MessageBox.Show("Issue Appending Data to the file", ex.Message);
+                    }
+
+                }
+            }
+        }
+
+        private void mnu_Quit_Click(object sender, EventArgs e)
+        {
+            var result = MessageBox.Show("Do you want to quit the application?", "Application Exit", MessageBoxButtons.YesNo);
+            if (result == DialogResult.No) { };
+            if (result == DialogResult.Yes) { Application.Exit();}
         }
     }
 }
