@@ -20,7 +20,10 @@ namespace _8ChannelOscilloscope_FiniteSamples
 
         double maxV;
         double minV;
-        int sampleRate;
+        double sampleRate;
+        int lowChan;
+        int highChan;
+        int totalChan;
         int numOfChannels;
         int A2D_MAXRATE = 250000;
         decimal MAXTIME = 9;
@@ -162,6 +165,7 @@ namespace _8ChannelOscilloscope_FiniteSamples
             {
                 NumUD_LowChan.Maximum = 15;
             }
+            int lowChan = (int)NumUD_LowChan.Value;
             AD_SampleRate();
         }
 
@@ -180,7 +184,7 @@ namespace _8ChannelOscilloscope_FiniteSamples
             {
                 NumUD_HighChan.Maximum = 15;
             }
-
+            highChan = (int)NumUD_HighChan.Value;
             AD_SampleRate();
         }
 
@@ -236,6 +240,7 @@ namespace _8ChannelOscilloscope_FiniteSamples
         {
             try
             {
+                int totalChan = (int)NumUD_HighChan.Value - (int)NumUD_LowChan.Value + 1;
                 int rowsChannelsData;
                 int colsVoltageData;
 
@@ -248,7 +253,7 @@ namespace _8ChannelOscilloscope_FiniteSamples
                     cht_Data.Series.Add("Channel" + (j+NumUD_LowChan.Value).ToString());
                     cht_Data.Series["Channel" + (j + NumUD_LowChan.Value).ToString()].ChartType = SeriesChartType.Spline;
                 }
-                int totalChan = (int)NumUD_HighChan.Value - (int)NumUD_LowChan.Value + 1;
+               
 
                 for (int i = 0; i < rowsChannelsData; i++)
                 {
@@ -342,11 +347,63 @@ namespace _8ChannelOscilloscope_FiniteSamples
                 ,MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
+        //The OpenFile should open an existing file and plot the data.
         private void mnu_Open_Click(object sender, EventArgs e)
-        {
+        {   if (data != null)
+            { MessageBox.Show("Clear chart before attempting to open data"); }
+            else 
+            {
+                openFD.Filter = "CSV Files|*.csv|All Files|*.*";
 
+                if (openFD.ShowDialog() == DialogResult.OK)
+                {
+                    try
+                    {
+                        using (StreamReader sr = new StreamReader(openFD.FileName))
+                        {   //Need to skip first two rows of each file (Date and Time)
+                            sr.ReadLine();
+                            sr.ReadLine();
+                            string strPoints = sr.ReadLine(); //reads (# points and value) [0,1]
+                            string headerTimeChan = sr.ReadLine();
+
+                            //Next Lines should get # of data points and # of channels
+                            //Ensures integer, splits string by commas
+                            //Trim makes sure no spaces, [1] is second value in string
+                            int numPoints = int.Parse(strPoints.Split(',')[1].Trim());
+                            string [] header = headerTimeChan.Split(',');
+                            //First column of header is time so find the length and subtract 1
+                            int numOfChannels = header.Length - 1;
+
+                            double[,] data = new double[numPoints, numOfChannels];
+
+                            // Loop through each row
+                            for (int i = 0; i < numPoints; i++)
+                            {
+                                string strData = sr.ReadLine();
+                                string[] readData = strData.Split(',');
+
+                                //Loop through each channel to get voltage values
+                                for (int j = 0; j < numOfChannels; j++)
+                                {
+                                    // Convert string to double and store it in the array
+                                    // readData[0] is time have to skip
+                                    data[i, j] = double.Parse(readData[j + 1]);
+                                }
+                            }
+
+                            MessageBox.Show($"value 3 {data[3, 3]}");
+
+                        }
+                    }
+                    catch (Exception ex) 
+                    {
+                        MessageBox.Show("There was an issue opening the file", ex.Message);
+                    }
+                }
+            }
         }
 
+        //The NewFile should create a new CSV file that can be opened in excel
         private void mnu_New_Click(object sender, EventArgs e)
         {   if (data == null)
             { MessageBox.Show("Acquire data before attempting to save."); }
@@ -369,9 +426,6 @@ namespace _8ChannelOscilloscope_FiniteSamples
 
                             // Write column headers
                             sw.Write("Elapsed Time(s)");
-                            int lowChan = (int)NumUD_LowChan.Value;
-                            int highChan = (int)NumUD_HighChan.Value;
-                            int totalChan = highChan - lowChan + 1;
 
                             for (int i = lowChan; i < highChan + 1; i++)
                             {
@@ -406,6 +460,7 @@ namespace _8ChannelOscilloscope_FiniteSamples
 
         }
 
+        //The AppendFile should append a new data set to an existing data set
         private void mnu_Append_Click(object sender, EventArgs e)
         {
             if (data == null)
@@ -427,9 +482,6 @@ namespace _8ChannelOscilloscope_FiniteSamples
 
                             // Write column headers
                             sw.Write("Elapsed Time(s)");
-                            int lowChan = (int)NumUD_LowChan.Value;
-                            int highChan = (int)NumUD_HighChan.Value;
-                            int totalChan = highChan - lowChan + 1;
 
                             for (int i = lowChan; i < highChan + 1; i++)
                             {
@@ -458,7 +510,6 @@ namespace _8ChannelOscilloscope_FiniteSamples
                     {
                         MessageBox.Show("Issue Appending Data to the file", ex.Message);
                     }
-
                 }
             }
         }
