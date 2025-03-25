@@ -187,7 +187,7 @@ namespace _8ChannelOscilloscope_FiniteSamples
         {
             DisableControls();
 
-            try 
+            try
             {
                 int highChan = (int)NumUD_HighChan.Value;
                 int lowChan = (int)NumUD_LowChan.Value;
@@ -217,11 +217,11 @@ namespace _8ChannelOscilloscope_FiniteSamples
                 //myTask.Control(TaskAction.Verify);
                 reader = new AnalogMultiChannelReader(myTask.Stream);
                 reader.BeginReadMultiSample((int)NumUD_SampPerChan.Value, new AsyncCallback(callback), null);
-                
+
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
-               // MessageBox.Show("There is an issue acquiring data", ex.Message);
+                // MessageBox.Show("There is an issue acquiring data", ex.Message);
             }
 
         }
@@ -235,14 +235,10 @@ namespace _8ChannelOscilloscope_FiniteSamples
             //Dispose of task after each plotting
             myTask?.Dispose();
         }
+
         private void btn_ClearChart_Click(object sender, EventArgs e)
         {
-            //Should clear all chart data 
-            //foreach (var series in cht_Data.Series)
-           // {
-           //    series.Points.Clear();
-           // }
-            cht_Data.Series.Clear();
+            //cht_Data.Series.Clear();
         }
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
@@ -336,6 +332,59 @@ namespace _8ChannelOscilloscope_FiniteSamples
             NumUD_LowChan.Enabled = true;
             btn_Acquire.Enabled = true;
             btn_ClearChart.Enabled = true;
+        }
+
+        private void mnu_Acquire_Click(object sender, EventArgs e)
+        {
+            DisableControls();
+
+            try
+            {
+                int highChan = (int)NumUD_HighChan.Value;
+                int lowChan = (int)NumUD_LowChan.Value;
+                string DeviceName = Cbx_Device.SelectedItem.ToString();
+
+                //Setting max and min values required for AIChannel configuration
+                if (Cbx_VoltageRange.SelectedIndex == 0) { maxV = 10; minV = -10; }
+                if (Cbx_VoltageRange.SelectedIndex == 1) { maxV = 5; minV = -5; }
+                if (Cbx_VoltageRange.SelectedIndex == 2) { maxV = 1; minV = -1; }
+                if (Cbx_VoltageRange.SelectedIndex == 3) { maxV = 0.2; minV = -0.2; }
+
+                myTask = new NationalInstruments.DAQmx.Task();
+
+                //Looping through low-high channels to create channels
+                for (int i = lowChan; i <= highChan; i++)
+                {
+                    string DevChan = $"{DeviceName}/ai{i}";
+                    if (Cbx_TerminalConfig.SelectedIndex == 0) 
+                    { myTask.AIChannels.CreateVoltageChannel(DevChan, "", AITerminalConfiguration.Nrse, minV, maxV, AIVoltageUnits.Volts); }
+                    if (Cbx_TerminalConfig.SelectedIndex == 1) 
+                    { myTask.AIChannels.CreateVoltageChannel(DevChan, "", AITerminalConfiguration.Rse, minV, maxV, AIVoltageUnits.Volts); }
+                    if (Cbx_TerminalConfig.SelectedIndex == 2) 
+                    { myTask.AIChannels.CreateVoltageChannel(DevChan, "", AITerminalConfiguration.Differential, minV, maxV, AIVoltageUnits.Volts); }
+                }
+
+                //Timing Specs
+                myTask.Timing.ConfigureSampleClock("", (Double)NumUD_ChanSampRate.Value, SampleClockActiveEdge.Rising, 
+                    SampleQuantityMode.FiniteSamples, (int)NumUD_SampPerChan.Value);
+                reader = new AnalogMultiChannelReader(myTask.Stream);
+                reader.BeginReadMultiSample((int)NumUD_SampPerChan.Value, new AsyncCallback(callback), null);
+
+            }
+            catch (Exception ex)
+            {
+                // MessageBox.Show("There is an issue acquiring data", ex.Message);
+            }
+        }
+
+        private void mnu_Clear_Click(object sender, EventArgs e)
+        {
+            cht_Data.Series.Clear();
+        }
+
+        private void mnu_Help_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

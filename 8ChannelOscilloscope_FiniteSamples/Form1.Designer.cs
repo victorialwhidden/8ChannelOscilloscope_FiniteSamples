@@ -37,8 +37,6 @@
             this.lbl_AcqTime = new System.Windows.Forms.Label();
             this.lbl_ADrateTimeLabel = new System.Windows.Forms.Label();
             this.lbl_AcqTimeLabel = new System.Windows.Forms.Label();
-            this.btn_ClearChart = new System.Windows.Forms.Button();
-            this.btn_Acquire = new System.Windows.Forms.Button();
             this.lbl_ChanRange = new System.Windows.Forms.Label();
             this.lbl_NumOfSamples = new System.Windows.Forms.Label();
             this.lbl_SampleRate = new System.Windows.Forms.Label();
@@ -55,12 +53,25 @@
             this.Cbx_TerminalConfig = new System.Windows.Forms.ComboBox();
             this.Cbx_Device = new System.Windows.Forms.ComboBox();
             this.cht_Data = new System.Windows.Forms.DataVisualization.Charting.Chart();
+            this.menuStrip1 = new System.Windows.Forms.MenuStrip();
+            this.mnu_File = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnu_Open = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnu_Save = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnu_New = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnu_Append = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnu_Quit = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnu_Acquire = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnu_Clear = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnu_Help = new System.Windows.Forms.ToolStripMenuItem();
+            this.btn_ClearChart = new System.Windows.Forms.Button();
+            this.btn_Acquire = new System.Windows.Forms.Button();
             this.gb_DAQ.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.NumUD_SampPerChan)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.NumUD_ChanSampRate)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.NumUD_HighChan)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.NumUD_LowChan)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.cht_Data)).BeginInit();
+            this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // gb_DAQ
@@ -90,9 +101,9 @@
             this.gb_DAQ.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.gb_DAQ.Font = new System.Drawing.Font("Mongolian Baiti", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.gb_DAQ.ForeColor = System.Drawing.SystemColors.Control;
-            this.gb_DAQ.Location = new System.Drawing.Point(12, 12);
+            this.gb_DAQ.Location = new System.Drawing.Point(12, 27);
             this.gb_DAQ.Name = "gb_DAQ";
-            this.gb_DAQ.Size = new System.Drawing.Size(510, 521);
+            this.gb_DAQ.Size = new System.Drawing.Size(510, 506);
             this.gb_DAQ.TabIndex = 0;
             this.gb_DAQ.TabStop = false;
             this.gb_DAQ.Text = "DAQ Configuration";
@@ -140,30 +151,6 @@
             this.lbl_AcqTimeLabel.Size = new System.Drawing.Size(157, 16);
             this.lbl_AcqTimeLabel.TabIndex = 17;
             this.lbl_AcqTimeLabel.Text = "Acquisition Time (s)";
-            // 
-            // btn_ClearChart
-            // 
-            this.btn_ClearChart.BackColor = System.Drawing.SystemColors.ScrollBar;
-            this.btn_ClearChart.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
-            this.btn_ClearChart.Location = new System.Drawing.Point(17, 417);
-            this.btn_ClearChart.Name = "btn_ClearChart";
-            this.btn_ClearChart.Size = new System.Drawing.Size(221, 73);
-            this.btn_ClearChart.TabIndex = 16;
-            this.btn_ClearChart.Text = "Clear Chart";
-            this.btn_ClearChart.UseVisualStyleBackColor = false;
-            this.btn_ClearChart.Click += new System.EventHandler(this.btn_ClearChart_Click);
-            // 
-            // btn_Acquire
-            // 
-            this.btn_Acquire.BackColor = System.Drawing.SystemColors.ScrollBar;
-            this.btn_Acquire.ForeColor = System.Drawing.SystemColors.InfoText;
-            this.btn_Acquire.Location = new System.Drawing.Point(17, 323);
-            this.btn_Acquire.Name = "btn_Acquire";
-            this.btn_Acquire.Size = new System.Drawing.Size(221, 73);
-            this.btn_Acquire.TabIndex = 15;
-            this.btn_Acquire.Text = "Acquire Data";
-            this.btn_Acquire.UseVisualStyleBackColor = false;
-            this.btn_Acquire.Click += new System.EventHandler(this.btn_Acquire_Click);
             // 
             // lbl_ChanRange
             // 
@@ -317,9 +304,9 @@
             legend1.IsTextAutoFit = false;
             legend1.Name = "Legend1";
             this.cht_Data.Legends.Add(legend1);
-            this.cht_Data.Location = new System.Drawing.Point(539, 12);
+            this.cht_Data.Location = new System.Drawing.Point(539, 27);
             this.cht_Data.Name = "cht_Data";
-            this.cht_Data.Size = new System.Drawing.Size(583, 521);
+            this.cht_Data.Size = new System.Drawing.Size(583, 506);
             this.cht_Data.TabIndex = 1;
             this.cht_Data.Text = "chart1";
             title1.Font = new System.Drawing.Font("Mongolian Baiti", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -327,6 +314,125 @@
             title1.Name = "Title1";
             title1.Text = "Voltage vs Time";
             this.cht_Data.Titles.Add(title1);
+            // 
+            // menuStrip1
+            // 
+            this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.mnu_File,
+            this.mnu_Acquire,
+            this.mnu_Clear,
+            this.mnu_Help});
+            this.menuStrip1.Location = new System.Drawing.Point(0, 0);
+            this.menuStrip1.Name = "menuStrip1";
+            this.menuStrip1.Size = new System.Drawing.Size(1134, 24);
+            this.menuStrip1.TabIndex = 2;
+            this.menuStrip1.Text = "menuStrip1";
+            // 
+            // mnu_File
+            // 
+            this.mnu_File.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.mnu_Open,
+            this.mnu_Save,
+            this.mnu_Quit});
+            this.mnu_File.Name = "mnu_File";
+            this.mnu_File.ShortcutKeyDisplayString = "Ctrl+F";
+            this.mnu_File.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.F)));
+            this.mnu_File.Size = new System.Drawing.Size(37, 20);
+            this.mnu_File.Text = "File";
+            // 
+            // mnu_Open
+            // 
+            this.mnu_Open.Name = "mnu_Open";
+            this.mnu_Open.ShortcutKeyDisplayString = "Ctrl+O";
+            this.mnu_Open.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
+            this.mnu_Open.Size = new System.Drawing.Size(146, 22);
+            this.mnu_Open.Text = "Open";
+            // 
+            // mnu_Save
+            // 
+            this.mnu_Save.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.mnu_New,
+            this.mnu_Append});
+            this.mnu_Save.Name = "mnu_Save";
+            this.mnu_Save.ShortcutKeyDisplayString = "Ctrl+S";
+            this.mnu_Save.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
+            this.mnu_Save.Size = new System.Drawing.Size(146, 22);
+            this.mnu_Save.Text = "Save";
+            // 
+            // mnu_New
+            // 
+            this.mnu_New.Name = "mnu_New";
+            this.mnu_New.ShortcutKeyDisplayString = "Ctrl+N";
+            this.mnu_New.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.N)));
+            this.mnu_New.Size = new System.Drawing.Size(158, 22);
+            this.mnu_New.Text = "New";
+            // 
+            // mnu_Append
+            // 
+            this.mnu_Append.Name = "mnu_Append";
+            this.mnu_Append.ShortcutKeyDisplayString = "Ctrl+A";
+            this.mnu_Append.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.A)));
+            this.mnu_Append.Size = new System.Drawing.Size(158, 22);
+            this.mnu_Append.Text = "Append";
+            // 
+            // mnu_Quit
+            // 
+            this.mnu_Quit.Name = "mnu_Quit";
+            this.mnu_Quit.ShortcutKeyDisplayString = "Ctrl+Q";
+            this.mnu_Quit.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Q)));
+            this.mnu_Quit.Size = new System.Drawing.Size(146, 22);
+            this.mnu_Quit.Text = "Quit";
+            // 
+            // mnu_Acquire
+            // 
+            this.mnu_Acquire.Name = "mnu_Acquire";
+            this.mnu_Acquire.ShortcutKeyDisplayString = "Ctrl+D";
+            this.mnu_Acquire.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.D)));
+            this.mnu_Acquire.Size = new System.Drawing.Size(60, 20);
+            this.mnu_Acquire.Text = "Acquire";
+            this.mnu_Acquire.Click += new System.EventHandler(this.mnu_Acquire_Click);
+            // 
+            // mnu_Clear
+            // 
+            this.mnu_Clear.Name = "mnu_Clear";
+            this.mnu_Clear.ShortcutKeyDisplayString = "Ctrl+C";
+            this.mnu_Clear.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.C)));
+            this.mnu_Clear.Size = new System.Drawing.Size(78, 20);
+            this.mnu_Clear.Text = "Clear Chart";
+            this.mnu_Clear.Click += new System.EventHandler(this.mnu_Clear_Click);
+            // 
+            // mnu_Help
+            // 
+            this.mnu_Help.Name = "mnu_Help";
+            this.mnu_Help.ShortcutKeyDisplayString = "Ctrl+H";
+            this.mnu_Help.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.H)));
+            this.mnu_Help.Size = new System.Drawing.Size(44, 20);
+            this.mnu_Help.Text = "Help";
+            this.mnu_Help.Click += new System.EventHandler(this.mnu_Help_Click);
+            // 
+            // btn_ClearChart
+            // 
+            this.btn_ClearChart.BackColor = System.Drawing.SystemColors.ScrollBar;
+            this.btn_ClearChart.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
+            this.btn_ClearChart.Location = new System.Drawing.Point(17, 417);
+            this.btn_ClearChart.Name = "btn_ClearChart";
+            this.btn_ClearChart.Size = new System.Drawing.Size(221, 73);
+            this.btn_ClearChart.TabIndex = 16;
+            this.btn_ClearChart.Text = "Clear Chart";
+            this.btn_ClearChart.UseVisualStyleBackColor = false;
+            this.btn_ClearChart.Click += new System.EventHandler(this.btn_ClearChart_Click);
+            // 
+            // btn_Acquire
+            // 
+            this.btn_Acquire.BackColor = System.Drawing.SystemColors.ScrollBar;
+            this.btn_Acquire.ForeColor = System.Drawing.SystemColors.InfoText;
+            this.btn_Acquire.Location = new System.Drawing.Point(17, 323);
+            this.btn_Acquire.Name = "btn_Acquire";
+            this.btn_Acquire.Size = new System.Drawing.Size(221, 73);
+            this.btn_Acquire.TabIndex = 15;
+            this.btn_Acquire.Text = "Acquire Data";
+            this.btn_Acquire.UseVisualStyleBackColor = false;
+            this.btn_Acquire.Click += new System.EventHandler(this.btn_Acquire_Click);
             // 
             // Form1
             // 
@@ -336,6 +442,8 @@
             this.ClientSize = new System.Drawing.Size(1134, 559);
             this.Controls.Add(this.cht_Data);
             this.Controls.Add(this.gb_DAQ);
+            this.Controls.Add(this.menuStrip1);
+            this.MainMenuStrip = this.menuStrip1;
             this.Name = "Form1";
             this.Text = "Form1";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
@@ -347,7 +455,10 @@
             ((System.ComponentModel.ISupportInitialize)(this.NumUD_HighChan)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.NumUD_LowChan)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.cht_Data)).EndInit();
+            this.menuStrip1.ResumeLayout(false);
+            this.menuStrip1.PerformLayout();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -359,8 +470,6 @@
         private System.Windows.Forms.Label lbl_AcqTime;
         private System.Windows.Forms.Label lbl_ADrateTimeLabel;
         private System.Windows.Forms.Label lbl_AcqTimeLabel;
-        private System.Windows.Forms.Button btn_ClearChart;
-        private System.Windows.Forms.Button btn_Acquire;
         private System.Windows.Forms.Label lbl_ChanRange;
         private System.Windows.Forms.Label lbl_NumOfSamples;
         private System.Windows.Forms.Label lbl_SampleRate;
@@ -376,6 +485,18 @@
         private System.Windows.Forms.ComboBox Cbx_VoltageRange;
         private System.Windows.Forms.ComboBox Cbx_TerminalConfig;
         private System.Windows.Forms.ComboBox Cbx_Device;
+        private System.Windows.Forms.MenuStrip menuStrip1;
+        private System.Windows.Forms.ToolStripMenuItem mnu_File;
+        private System.Windows.Forms.ToolStripMenuItem mnu_Open;
+        private System.Windows.Forms.ToolStripMenuItem mnu_Save;
+        private System.Windows.Forms.ToolStripMenuItem mnu_New;
+        private System.Windows.Forms.ToolStripMenuItem mnu_Append;
+        private System.Windows.Forms.ToolStripMenuItem mnu_Quit;
+        private System.Windows.Forms.ToolStripMenuItem mnu_Acquire;
+        private System.Windows.Forms.ToolStripMenuItem mnu_Clear;
+        private System.Windows.Forms.ToolStripMenuItem mnu_Help;
+        private System.Windows.Forms.Button btn_ClearChart;
+        private System.Windows.Forms.Button btn_Acquire;
     }
 }
 
