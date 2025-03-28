@@ -23,7 +23,6 @@ namespace _8ChannelOscilloscope_FiniteSamples
         double sampleRate;
         int lowChan;
         int highChan;
-        int totalChan;
         int numOfChannels;
         int A2D_MAXRATE = 250000;
         decimal MAXTIME = 9;
@@ -191,6 +190,10 @@ namespace _8ChannelOscilloscope_FiniteSamples
         private void callback(IAsyncResult ar)
         {
             data = reader.EndReadMultiSample(ar);
+
+            lowChan = (int)NumUD_LowChan.Value;
+            sampleRate = (int)NumUD_ChanSampRate.Value;
+
             plotdata();
             EnableControls();
 
@@ -240,7 +243,6 @@ namespace _8ChannelOscilloscope_FiniteSamples
         {
             try
             {
-                int totalChan = (int)NumUD_HighChan.Value - (int)NumUD_LowChan.Value + 1;
                 int rowsChannelsData;
                 int colsVoltageData;
 
@@ -250,8 +252,8 @@ namespace _8ChannelOscilloscope_FiniteSamples
                 //Add series to chart and set chart types
                 for (int j = 0; j < rowsChannelsData; j++)
                 {
-                    cht_Data.Series.Add("Channel" + (j+NumUD_LowChan.Value).ToString());
-                    cht_Data.Series["Channel" + (j + NumUD_LowChan.Value).ToString()].ChartType = SeriesChartType.Spline;
+                    cht_Data.Series.Add("Channel" + (j+lowChan).ToString());
+                    cht_Data.Series["Channel" + (j + lowChan).ToString()].ChartType = SeriesChartType.Spline;
                 }
                
 
@@ -259,8 +261,8 @@ namespace _8ChannelOscilloscope_FiniteSamples
                 {
                     for (int j = 0; j < colsVoltageData; j++)
                     {
-                        double time = j / (double)NumUD_ChanSampRate.Value;
-                        cht_Data.Series["Channel" + (i+NumUD_LowChan.Value).ToString()].Points.AddXY(time, data[i, j]);
+                        double time = j / sampleRate;
+                        cht_Data.Series["Channel" + (i+lowChan).ToString()].Points.AddXY(time, data[i, j]);
                     }
                 }
             }
@@ -339,6 +341,8 @@ namespace _8ChannelOscilloscope_FiniteSamples
         private void mnu_Clear_Click(object sender, EventArgs e)
         {
             cht_Data.Series.Clear();
+            data = new double [0, 0];
+            data = null;
         }
 
         private void mnu_Help_Click(object sender, EventArgs e)
@@ -350,7 +354,10 @@ namespace _8ChannelOscilloscope_FiniteSamples
         //The OpenFile should open an existing file and plot the data.
         private void mnu_Open_Click(object sender, EventArgs e)
         {   if (data != null)
-            { MessageBox.Show("Clear chart before attempting to open data"); }
+            {
+                cht_Data.Series.Clear();
+
+                MessageBox.Show("Clear chart before attempting to open data"); }
             else 
             {
                 openFD.Filter = "CSV Files|*.csv|All Files|*.*";
@@ -371,10 +378,33 @@ namespace _8ChannelOscilloscope_FiniteSamples
                             //Trim makes sure no spaces, [1] is second value in string
                             int numPoints = int.Parse(strPoints.Split(',')[1].Trim());
                             string [] header = headerTimeChan.Split(',');
+
+                            string lowHeader = header[1].Trim();
+                            string highHeader = header[header.Length - 1].Trim();
+
+                            for (int i = 0; i < 16; i++)
+                            {
+                                if (lowHeader == $"Ch{i}")
+                                { 
+                                  lowChan = i;
+                                  break;
+                                }
+                            }
+                            for (int i = 0; i < 16; i++)
+                            {
+                                if (highHeader == $"Ch{i}")
+                                {
+                                   highChan = i;
+                                   break;
+                                }
+                            }
+
+                          
                             //First column of header is time so find the length and subtract 1
                             int numOfChannels = header.Length - 1;
 
-                            double[,] data = new double[numPoints, numOfChannels];
+                            data = new double[numPoints, numOfChannels];
+                            double totalTime = 0;
 
                             // Loop through each row
                             for (int i = 0; i < numPoints; i++)
@@ -389,10 +419,15 @@ namespace _8ChannelOscilloscope_FiniteSamples
                                     // readData[0] is time have to skip
                                     data[i, j] = double.Parse(readData[j + 1]);
                                 }
+                                if (i == numPoints - 1)
+                                { totalTime = double.Parse(readData[0]); }
                             }
+                            //get the sample rate... total samples/last time value in Data
 
-                            MessageBox.Show($"value 3 {data[3, 3]}");
+                            sampleRate = numPoints / totalTime;
+                            MessageBox.Show($"{sampleRate}");
 
+                            plotDataOpen();
                         }
                     }
                     catch (Exception ex) 
@@ -401,6 +436,42 @@ namespace _8ChannelOscilloscope_FiniteSamples
                     }
                 }
             }
+        }
+        private void plotDataOpen()
+        {
+            try
+            {
+                int rowsChannelsData;
+                int colsVoltageData;
+
+                rowsChannelsData = data.GetLength(1); // Gets # of channels (columns)
+                colsVoltageData = data.GetLength(0); // Gets # of time data points (rows)
+
+                // Add series to chart and set chart types
+                for (int j = 0; j < rowsChannelsData; j++)
+                {
+                    cht_Data.Series.Add("Channel" + (j + lowChan).ToString());
+                    cht_Data.Series["Channel" + (j + lowChan).ToString()].ChartType = SeriesChartType.Spline;
+                }
+
+                // Loop through each row (time data)
+                for (int i = 0; i < colsVoltageData; i++)
+                {
+                    double time = i / sampleRate;  // Time is the index divided by sampleRate
+
+                    // Loop through each channel
+                    for (int j = 0; j < rowsChannelsData; j++)
+                    {
+                        // Add the data points (time, value) to each channel
+                        cht_Data.Series["Channel" + (j + lowChan).ToString()].Points.AddXY(time, data[i, j]);
+                    }
+                }
+            }
+            catch (Exception ex2)
+            {
+                MessageBox.Show("There was an issue plotting new data. Clear the chart.", ex2.Message);
+            }
+
         }
 
         //The NewFile should create a new CSV file that can be opened in excel
@@ -413,7 +484,7 @@ namespace _8ChannelOscilloscope_FiniteSamples
                 if (saveFD.ShowDialog() == DialogResult.OK)
                 {
                     try
-                    {
+                    { 
                         using (StreamWriter sw = new StreamWriter(saveFD.FileName))
                         {
                             //WriteLine moves to NEXT ROW
@@ -485,7 +556,7 @@ namespace _8ChannelOscilloscope_FiniteSamples
 
                             for (int i = lowChan; i < highChan + 1; i++)
                             {
-                                sw.Write($",Ch{i} (V)"); //Creates new COLUMN (comma) for each channel
+                                sw.Write($",Ch{i}"); //Creates new COLUMN (comma) for each channel
                             }
                             sw.WriteLine(); //Moves to next line
 
